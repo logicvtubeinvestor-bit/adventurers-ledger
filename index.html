@@ -115,8 +115,7 @@ select, input[type=text], input[type=number] { font: inherit; color: var(--fg); 
 footer { font-size: 12px; color: var(--muted); display: grid; gap: 4px; }
 
 /* Paid-edition skins: only tokens change */
-body[data-skin="dawn"] { --bg: #efe6d2; --panel: #fbf6ea; --panel-2: #f1e7d1; --line: #b59f78; --fg: #2d2418; --muted: #75664f; --gold: #a86b12; --exp: #1f8f80; --hp: #c23a40; --good: #2e8a42; --bad: #c23a40; color-scheme: light; }
-body[data-skin="gold"] { --bg: #16130c; --panel: #241f14; --panel-2: #2f2819; --line: #7a6634; --fg: #f6ecd2; --muted: #b9a986; --gold: #ffd35a; --exp: #8fd1ff; --hp: #ff6b5b; --good: #9be37a; --bad: #ff8a7a; }
+
 .ic { width: 1.1em; height: 1.1em; vertical-align: -0.15em; margin-right: 6px; }
 .ic .f { fill: var(--gold); } .ic .s { fill: var(--panel); } .ic .h { fill: var(--hp); } .ic .e { fill: var(--exp); }
 .adslot { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; justify-content: space-between; background: var(--panel-2); padding: 12px 16px; box-shadow: 0 0 0 2px var(--line); font-size: 14px; }
@@ -542,10 +541,7 @@ $("guides").replaceChildren(...GUIDES.map((g) => el("div", { class: "guide" },
 const SCENARIOS = [
   { id: "2024-08", name: "令和のブラックマンデー", when: "2024年7月〜8月5日", jp: -0.266, us: -0.085, yen: -0.124, crypto: -0.162, free: true,
     src: "日本株: 日経平均 7/11最高値42,426円→8/5一時31,156円(−26.6%、PayPay証券)。ドル円: 7/10の161円台→8/5一時141円台(Business Insider)。暗号資産: BTC 8/5の約847万円→約710万円(GIGAZINE)。米国株: 7月高値からの下落の目安" },
-  { id: "2020-03", name: "コロナショック", when: "2020年2月〜3月", jp: -0.30, us: -0.34, yen: -0.098, crypto: -0.50,
-    src: "日本株: 日経平均 2019年末23,656円→3/19の16,552円(約−30%、マネクリ)。米国株: S&P500 2/19最高値から約−34%(CNBC報道の−32%に3/23の下げを加えた目安)。ドル円・暗号資産は当時の安値からの目安" },
-  { id: "2008-10", name: "リーマンショック", when: "2008年9月〜10月", jp: -0.41, us: -0.32, yen: -0.15, crypto: -0.50,
-    src: "ドル円: 2008年10月 106円→90円(最大15%、マネーフォワード)。日本株・米国株は当時の安値からの目安。暗号資産は当時なかったため−50%と仮定" },
+  
 ];
 const SRC_LINKS = [
   ["PayPay証券 2024/8/5の相場", "https://media.paypay-sec.co.jp/cat2/mj240805_1"],
@@ -709,20 +705,7 @@ function renderReplay() {
       "有料版では、資産帳に登録したすべての口座で3つの暴落を再現し、口座ごとのロスカット・追証、それを避けるために必要な入金額、1円の円高で総資産がいくら動くかを表示します。"));
     return;
   }
-  const book = ledgerBook(), rate = state.usdjpy;
-  const sens = yenSensitivity(book, rate);
-  const blocks = SCENARIOS.map((sc) => {
-    const r = runScenario(book, sc, rate);
-    return el("div", { class: "levc" },
-      el("h3", { text: sc.name + "(" + sc.when + ")" }),
-      el("div", { class: "row" }, el("span", { class: "muted", text: "HP" }), el("span", { class: "num " + (r.hp >= 0.65 ? "good" : "bad"), text: Math.round(r.hp * 100) + "% 【" + r.rank + "】" })),
-      el("div", { class: "row" }, el("span", { class: "muted", text: "総資産" }), el("span", { class: "num", text: yen(r.before) + " → " + yen(r.after) })),
-      ...r.rows.map((x) => el("div", { class: "row" }, el("span", { text: x.name + "(" + x.kind + ")" }),
-        el("span", { class: "num " + (x.status === "生存" ? "good" : "bad"), text: x.status + (x.need > 0 ? " / 回避に入金 " + yen(x.need) : "") }))));
-  });
-  body.replaceChildren(
-    el("p", { class: "note", style: "margin-top:0", text: "ドル円 " + rate + "円で計算。1円の円高で総資産は " + signed(sens) + " 動きます(米国株・海外投信の円換算とFXの建玉)。" }),
-    el("div", { class: "lev" }, ...blocks));
+  
 }
 
 function renderSurvival() {
